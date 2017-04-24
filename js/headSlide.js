@@ -2,16 +2,7 @@
 $(function() {
     sliderObject.init();
 });
-//整屏切换 
-var mySwiper = new Swiper('.swiper-container', {
-    onSlideChangeEnd: function(swiper) {
-        //触发点击事件
-        var index = swiper.activeIndex;
-        //找到需要处理的li的对象
-        var obj = $(".nav-list li").eq(index);
-        sliderObject.navClick(obj,1);
-    }
-});
+var sliderType=1;
 //slider滑动的对象
 var sliderObject = {
     data: {
@@ -22,11 +13,12 @@ var sliderObject = {
     init: function() {
         //初始化界面元素
         $(".nav-list").css("left", 0);
-        $(".nav-list li").each(function() {
-            $(".nav-list li").eq(0).addClass("active").siblings().removeClass("active");
-        });
+        // $(".nav-list li").each(function() {
+        //     $(".nav-list li").eq(0).addClass("active").siblings().removeClass("active");
+        // });
         //事件绑定
         $(".nav-list li").on('click', function() {
+            sliderType=0;
             sliderObject.navClick(this,0);
         });
         $(".nav-list").on('touchstart', function(e) {
@@ -58,6 +50,7 @@ var sliderObject = {
         if(type==0){
           mySwiper.slideTo($(that).index());
         }
+        sliderType=1;
     },
     navTouchstart: function(e, that) {
         var touch = e.originalEvent.targetTouches[0];
@@ -83,3 +76,23 @@ var sliderObject = {
         }
     }
 };
+//整屏切换 
+var mySwiper = new Swiper('.swiper-container', {
+    initialSlide: 5,
+    speed:400,
+    onTransitionStart: function(swiper) {
+        //触发点击事件
+        var index = swiper.activeIndex;
+        //找到需要处理的li的对象
+        var obj = $(".nav-list li").eq(index);
+        console.log("1");
+        if(sliderType==0){
+           return;
+        }
+        sliderType=1;
+        sliderObject.navClick(obj,1);
+    },
+    onSlideChangeEnd: function(swiper) {
+        $(".nav-list li").eq(swiper.activeIndex).addClass("active").siblings().removeClass("active");
+    }
+});
